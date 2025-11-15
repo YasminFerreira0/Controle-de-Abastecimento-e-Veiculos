@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  provider: ^6.1.0
   # Dependência principal - OBRIGATÓRIA
   firebase_core: ^2.30.0 # Use a versão mais recente
   
