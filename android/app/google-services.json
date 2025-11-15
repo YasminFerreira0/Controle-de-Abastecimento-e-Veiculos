@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "298885391226",
+    "project_id": "p2-abastecimento",
+    "storage_bucket": "p2-abastecimento.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298885391226:android:2c63ed509c71784ffaacc3",
+        "android_client_info": {
+          "package_name": "com.example.p2_andre"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGRF0ObXW8lZ4khe4nJ1xsX-q7IWUAdlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
