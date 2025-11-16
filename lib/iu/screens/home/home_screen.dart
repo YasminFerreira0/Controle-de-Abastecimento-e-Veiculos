@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../veiculos/veiculos_list_screen.dart'; // ⬅ IMPORTANTE
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,7 +12,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bem-vindo'),
+        title: const Text('Bem-vindo'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -21,8 +22,19 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text('Você está logado!'),
+      body: Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.directions_car),
+          label: const Text('Gerenciar Veículos'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VeiculosListScreen(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
