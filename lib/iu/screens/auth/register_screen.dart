@@ -47,87 +47,113 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cadastro')),
+      appBar: AppBar(
+        title: const Text('Cadastro'),
+        centerTitle: true,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Criar conta',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _emailCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mail',
-                    border: OutlineInputBorder(),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Criar conta',
+                    textAlign: TextAlign.center,
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.primary,
+                    ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Informe o e-mail';
-                    }
-                    if (!value.contains('@')) {
-                      return 'E-mail inválido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _passwordCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Senha',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Preencha os dados abaixo para se cadastrar',
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium,
                   ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Informe a senha';
-                    }
-                    if (value.length < 6) {
-                      return 'Mínimo 6 caracteres';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _passwordConfirmCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirmar senha',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 24),
+
+                  TextFormField(
+                    controller: _emailCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'E-mail',
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Informe o e-mail';
+                      }
+                      if (!value.contains('@')) {
+                        return 'E-mail inválido';
+                      }
+                      return null;
+                    },
                   ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value != _passwordCtrl.text) {
-                      return 'As senhas não conferem';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: auth.isLoading ? null : _onRegister,
-                    child: auth.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Cadastrar'),
+                  const SizedBox(height: 12),
+
+                  TextFormField(
+                    controller: _passwordCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Senha',
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Informe a senha';
+                      }
+                      if (value.length < 6) {
+                        return 'Mínimo 6 caracteres';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+
+                  TextFormField(
+                    controller: _passwordConfirmCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirmar senha',
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Confirme a senha';
+                      }
+                      if (value != _passwordCtrl.text) {
+                        return 'As senhas não conferem';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: auth.isLoading ? null : _onRegister,
+                      child: auth.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Cadastrar'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

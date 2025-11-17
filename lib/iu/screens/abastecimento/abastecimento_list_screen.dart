@@ -10,7 +10,11 @@ class AbastecimentosListScreen extends StatelessWidget {
   final _service = AbastecimentoService();
 
   Future<void> _confirmarExclusao(
-      BuildContext context, Abastecimento a) async {
+    BuildContext context,
+    Abastecimento a,
+  ) async {
+    final colors = Theme.of(context).colorScheme;
+
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -21,7 +25,11 @@ class AbastecimentosListScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancelar'),
           ),
-          TextButton(
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: colors.error,
+              foregroundColor: colors.onError,
+            ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Excluir'),
           ),
@@ -49,6 +57,10 @@ class AbastecimentosListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Abastecimentos'),
@@ -56,11 +68,11 @@ class AbastecimentosListScreen extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.local_gas_station),
+                icon: Icon(Icons.add, color: colors.onPrimary),
                 label: const Text('Novo abastecimento'),
                 onPressed: () {
                   Navigator.push(
@@ -73,7 +85,7 @@ class AbastecimentosListScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(height: 0),
+
           Expanded(
             child: StreamBuilder<List<Abastecimento>>(
               stream: _service.streamAbastecimentos(),
@@ -84,52 +96,90 @@ class AbastecimentosListScreen extends StatelessWidget {
                   );
                 }
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final abastecimentos = snapshot.data!;
                 if (abastecimentos.isEmpty) {
-                  return const Center(
-                    child: Text('Nenhum abastecimento cadastrado.'),
+                  return Center(
+                    child: Text(
+                      'Nenhum abastecimento cadastrado.',
+                      style: textTheme.bodyMedium,
+                    ),
                   );
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: abastecimentos.length,
                   itemBuilder: (context, index) {
                     final a = abastecimentos[index];
-                    return ListTile(
-                      leading: const Icon(Icons.local_gas_station),
-                      title: Text(
-                          '${_formatarData(a.data)} • ${a.tipoCombustivel}'),
-                      subtitle: Text(
-                          'Litros: ${a.quantidadeLitros} • Valor: R\$ ${a.valorPago}\nKm: ${a.quilometragem} • Consumo: ${a.consumo} km/L'),
-                      isThreeLine: true,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            tooltip: 'Editar',
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => AbastecimentoFormScreen(
-                                    abastecimento: a,
+
+                    return Card(
+                      elevation: 1,
+                      shadowColor: colors.primary.withOpacity(0.2),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 4,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16),
+
+                        title: Text(
+                          '${_formatarData(a.data)} — ${a.tipoCombustivel}',
+                          style: textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            '''
+Litros.................: ${a.quantidadeLitros}
+Valor..................: R\$ ${a.valorPago.toStringAsFixed(2)}
+Quilometragem....: ${a.quilometragem} km
+Consumo.............: ${a.consumo} km/L
+                            ''',
+                            style: textTheme.bodyMedium?.copyWith(
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'Editar',
+                              icon: Icon(
+                                Icons.edit,
+                                color: colors.primary,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AbastecimentoFormScreen(
+                                      abastecimento: a,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            tooltip: 'Excluir',
-                            icon: const Icon(Icons.delete),
-                            onPressed: () => _confirmarExclusao(context, a),
-                          ),
-                        ],
+                                );
+                              },
+                            ),
+                            IconButton(
+                              tooltip: 'Excluir',
+                              icon: Icon(
+                                Icons.delete,
+                                color: colors.error,
+                              ),
+                              onPressed: () => _confirmarExclusao(context, a),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

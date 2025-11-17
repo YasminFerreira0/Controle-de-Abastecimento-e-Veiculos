@@ -29,7 +29,6 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
   @override
   void initState() {
     super.initState();
-    // Se for edição, preenche os campos
     if (widget.veiculo != null) {
       final v = widget.veiculo!;
       _modeloCtrl.text = v.modelo;
@@ -58,7 +57,7 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
       final ano = int.tryParse(_anoCtrl.text.trim()) ?? 0;
 
       await _veiculoService.salvarVeiculo(
-        id: widget.veiculo?.id, // null se novo, id se edição
+        id: widget.veiculo?.id,
         modelo: _modeloCtrl.text.trim(),
         marca: _marcaCtrl.text.trim(),
         placa: _placaCtrl.text.trim(),
@@ -78,7 +77,7 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
         ),
       );
 
-      Navigator.pop(context); // volta para a lista
+      Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -99,11 +98,13 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
       'Gasolina',
       'Etanol',
       'Diesel',
-      'GNV',
       'Flex',
       'Elétrico',
       'Híbrido',
     ];
+
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -114,16 +115,19 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Text(
+                'Dados do veículo',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _modeloCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Modelo',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -132,16 +136,11 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _marcaCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Marca',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -150,16 +149,11 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _placaCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Placa',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -168,16 +162,11 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _anoCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Ano',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -193,16 +182,11 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: _tipoCombustivel,
                 decoration: const InputDecoration(
                   labelText: 'Tipo de combustível',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
                 ),
                 items: combustiveis
                     .map(
@@ -218,7 +202,7 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
                   }
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

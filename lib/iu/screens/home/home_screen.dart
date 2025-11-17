@@ -1,52 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:p2_andre/iu/screens/abastecimento/abastecimento_list_screen.dart';
-import 'package:provider/provider.dart';
-import '../../../providers/auth_provider.dart';
-import '../veiculos/veiculos_list_screen.dart';
+import 'package:p2_andre/iu/widgets/app_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bem-vindo'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              auth.signOut();
-            },
-          ),
-        ],
+        centerTitle: true,
       ),
+
+      drawer: const AppDrawer(),
+
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // impede de ocupar tela inteira
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton.icon(
-              icon: const Icon(Icons.directions_car),
-              label: const Text('Veículos'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => VeiculosListScreen()),
-                );
-              },
+            SizedBox(
+              width: 220,
+              height: 220,
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.contain,
+              ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.local_gas_station),
-              label: const Text('Abastecimentos'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => AbastecimentosListScreen()),
-                );
-              },
+
+            const SizedBox(height: 20),
+
+            Text(
+              'Gerencie seus veículos e abastecimentos',
+              textAlign: TextAlign.center,
+              style: textTheme.titleMedium?.copyWith(
+                color: colors.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

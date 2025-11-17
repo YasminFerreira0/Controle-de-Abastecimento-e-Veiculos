@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../services/firebase_auth_service.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -24,10 +25,9 @@ class AppWidget extends StatelessWidget {
       child: MaterialApp(
         title: 'App com Firebase Auth',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: Colors.blue,
-        ),
+
+        theme: AppTheme.lightTheme,
+
         home: const AuthGate(),
       ),
     );

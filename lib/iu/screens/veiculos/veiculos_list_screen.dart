@@ -13,6 +13,8 @@ class VeiculosListScreen extends StatelessWidget {
     BuildContext context,
     Veiculo veiculo,
   ) async {
+    final colors = Theme.of(context).colorScheme;
+
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -23,7 +25,11 @@ class VeiculosListScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancelar'),
           ),
-          TextButton(
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: colors.error,
+              foregroundColor: colors.onError,
+            ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Excluir'),
           ),
@@ -47,19 +53,24 @@ class VeiculosListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Veículos'),
+        centerTitle: true,
       ),
+
       body: Column(
         children: [
-          // Botão Novo Veículo no topo da tela
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.add),
+                icon: Icon(Icons.add, color: colors.onPrimary),
                 label: const Text('Novo veículo'),
                 onPressed: () {
                   Navigator.push(
@@ -72,8 +83,7 @@ class VeiculosListScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(height: 0),
-          // Lista de veículos
+
           Expanded(
             child: StreamBuilder<List<Veiculo>>(
               stream: _veiculoService.streamVeiculos(),
@@ -84,9 +94,7 @@ class VeiculosListScreen extends StatelessWidget {
                   );
                 }
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final veiculos = snapshot.data!;
@@ -97,35 +105,66 @@ class VeiculosListScreen extends StatelessWidget {
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: veiculos.length,
                   itemBuilder: (context, index) {
                     final v = veiculos[index];
-                    return ListTile(
-                      title: Text('${v.marca} ${v.modelo}'),
-                      subtitle: Text(
-                          'Placa: ${v.placa} • Ano: ${v.ano} • ${v.tipoCombustivel}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            tooltip: 'Editar',
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      VeiculoFormScreen(veiculo: v),
-                                ),
-                              );
-                            },
+
+                    return Card(
+                      elevation: 1,
+                      shadowColor: colors.primary.withOpacity(0.2),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 4,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16),
+
+                        title: Text(
+                          '${v.marca} ${v.modelo}',
+                          style: textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          IconButton(
-                            tooltip: 'Excluir',
-                            icon: const Icon(Icons.delete),
-                            onPressed: () => _confirmarExclusao(context, v),
+                        ),
+
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            '''
+Placa..................: ${v.placa}
+Ano....................: ${v.ano}
+Combustível.......: ${v.tipoCombustivel}
+                            ''',
+                            style: textTheme.bodyMedium!.copyWith(height: 1.3),
                           ),
-                        ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'Editar',
+                              icon: Icon(Icons.edit, color: colors.primary),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        VeiculoFormScreen(veiculo: v),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              tooltip: 'Excluir',
+                              icon: Icon(Icons.delete, color: colors.error),
+                              onPressed: () =>
+                                  _confirmarExclusao(context, v),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

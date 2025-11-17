@@ -138,15 +138,20 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
       'Gasolina',
       'Etanol',
       'Diesel',
-      'GNV',
       'Flex',
       'Elétrico',
       'Híbrido',
     ];
 
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Editar abastecimento' : 'Novo abastecimento'),
+        title: Text(
+          _isEditing ? 'Editar abastecimento' : 'Novo abastecimento',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -155,7 +160,8 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(
-                  child: Text('Erro ao carregar veículos'));
+                child: Text('Erro ao carregar veículos'),
+              );
             }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -170,7 +176,9 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
             if (veiculos.isEmpty) {
               return const Center(
                 child: Text(
-                    'Nenhum veículo cadastrado. Cadastre um veículo primeiro.'),
+                  'Nenhum veículo cadastrado.\nCadastre um veículo primeiro.',
+                  textAlign: TextAlign.center,
+                ),
               );
             }
 
@@ -180,30 +188,46 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
             return Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Data
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Data: ${_data.toLocal().toString().split(' ')[0]}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: _selecionarData,
-                        child: const Text('Selecionar data'),
-                      ),
-                    ],
+                  Text(
+                    'Dados do abastecimento',
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
 
-                  // Veículo
+                  // Data
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: _selecionarData,
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Data',
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            size: 18,
+                            color: colors.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _data.toLocal().toString().split(' ')[0],
+                            style: textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
                   DropdownButtonFormField<String>(
                     value: _veiculoIdSelecionado,
                     decoration: const InputDecoration(
                       labelText: 'Veículo',
-                      border: OutlineInputBorder(),
                     ),
                     items: veiculos
                         .map(
@@ -217,14 +241,12 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       setState(() => _veiculoIdSelecionado = value);
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Quantidade de litros
                   TextFormField(
                     controller: _quantidadeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Quantidade de litros',
-                      border: OutlineInputBorder(),
                     ),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
@@ -232,22 +254,20 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe a quantidade de litros';
                       }
-                      final val = double.tryParse(
-                          value.replaceAll(',', '.'));
+                      final val =
+                          double.tryParse(value.replaceAll(',', '.'));
                       if (val == null || val <= 0) {
                         return 'Valor inválido';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Valor pago
                   TextFormField(
                     controller: _valorPagoCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Valor pago (R\$)',
-                      border: OutlineInputBorder(),
                     ),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
@@ -255,22 +275,20 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe o valor pago';
                       }
-                      final val = double.tryParse(
-                          value.replaceAll(',', '.'));
+                      final val =
+                          double.tryParse(value.replaceAll(',', '.'));
                       if (val == null || val <= 0) {
                         return 'Valor inválido';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Quilometragem
                   TextFormField(
                     controller: _quilometragemCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Quilometragem (km)',
-                      border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
@@ -284,14 +302,12 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Consumo
                   TextFormField(
                     controller: _consumoCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Consumo (km/L)',
-                      border: OutlineInputBorder(),
                     ),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
@@ -299,22 +315,20 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'Informe o consumo';
                       }
-                      final val = double.tryParse(
-                          value.replaceAll(',', '.'));
+                      final val =
+                          double.tryParse(value.replaceAll(',', '.'));
                       if (val == null || val <= 0) {
                         return 'Consumo inválido';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Tipo de combustível
                   DropdownButtonFormField<String>(
                     value: _tipoCombustivel,
                     decoration: const InputDecoration(
                       labelText: 'Tipo de combustível',
-                      border: OutlineInputBorder(),
                     ),
                     items: combustiveis
                         .map(
@@ -330,18 +344,16 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // Observação
                   TextFormField(
                     controller: _observacaoCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Observação (opcional)',
-                      border: OutlineInputBorder(),
                     ),
                     maxLines: 3,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
                   SizedBox(
                     width: double.infinity,
